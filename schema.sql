@@ -15,8 +15,9 @@ CREATE TABLE meals (
 
 -- Table : meals_recipes
 CREATE TABLE meals_recipes (
-    meals_id [UNSIGNED INTEGER],
-    recipes_id [UNSIGNED INTEGER]
+    meals_id        [UNSIGNED INTEGER],
+    recipes_id      [UNSIGNED INTEGER],
+    quantity        [UNSIGNED INTEGER]
 );
 
 -- Table : recipes
@@ -31,17 +32,17 @@ CREATE TABLE recipes (
 -- Table : recipes_food
 CREATE TABLE recipes_food (
     dish_id       [UNSIGNED INTEGER],
-    food_id [UNSIGNED INTEGER],
+    food_id       [UNSIGNED INTEGER],
     quantity      [UNSIGNED INTEGER]
 );
 
 -- Table : food
 CREATE TABLE food (
     id           [UNSIGNED INTEGER] NOT NULL,
-    type         TEXT               NOT NULL,
-    sub_type     TEXT,
+--    type         TEXT               NOT NULL,
+--    sub_type     TEXT,
     name         TEXT               NOT NULL,
-    brand        TEXT,
+--    brand        TEXT,
 --    min_quantity [UNSIGNED INTEGER],
 --    min_weight   FLOAT,
 --    Liter        INTEGER,
