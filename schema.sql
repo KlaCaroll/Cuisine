@@ -28,8 +28,8 @@ CREATE TABLE recipes (
 );
 
 
--- Table : dishes_food
-CREATE TABLE dishes_food (
+-- Table : recipes_food
+CREATE TABLE recipes_food (
     dish_id       [UNSIGNED INTEGER],
     food_id [UNSIGNED INTEGER],
     quantity      [UNSIGNED INTEGER]
