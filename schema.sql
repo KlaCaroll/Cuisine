@@ -1,7 +1,7 @@
 -- Encodage texte utilisé : UTF-8
 
--- Table : meals
-CREATE TABLE meals (
+-- Table : meal
+CREATE TABLE meal (
     id         [UNSIGNED INTEGER] NOT NULL,
     planned_at DATE               NOT NULL,
     type       TEXT               NOT NULL,
@@ -13,15 +13,15 @@ CREATE TABLE meals (
     )
 );
 
--- Table : meals_recipes
-CREATE TABLE meals_recipes (
+-- Table : meal_recipe
+CREATE TABLE meal_recipe (
     meals_id        [UNSIGNED INTEGER],
-    recipes_id      [UNSIGNED INTEGER],
+    recipe_id      [UNSIGNED INTEGER],
     quantity        [UNSIGNED INTEGER]
 );
 
--- Table : recipes
-CREATE TABLE recipes (
+-- Table : recipe
+CREATE TABLE recipe (
     id       [UNSIGNED INTEGER]  NOT NULL,
     name     TEXT                NOT NULL,
     min_pers [UNSIGNED INTERGER] NOT NULL,
@@ -29,8 +29,8 @@ CREATE TABLE recipes (
 );
 
 
--- Table : recipes_food
-CREATE TABLE recipes_food (
+-- Table : recipe_food
+CREATE TABLE recipe_food (
     dish_id       [UNSIGNED INTEGER],
     food_id       [UNSIGNED INTEGER],
     quantity      [UNSIGNED INTEGER]
