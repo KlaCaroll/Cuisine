@@ -3,11 +3,11 @@
 -- Table : meal
 CREATE TABLE meal (
     id         [UNSIGNED INTEGER] NOT NULL,
+    name       TINYTEXT           NOT NULL,
     planned_at DATE               NOT NULL,
     type       TEXT               NOT NULL,
-    sub_type   TEXT               NOT NULL,
+    sub_type   TEXT,
     pers       INTEGER,
-    name       TINYTEXT           NOT NULL,
     PRIMARY KEY (
         id
     )
@@ -19,13 +19,12 @@ CREATE TABLE meal_recipe (
     recipe_id      [UNSIGNED INTEGER],
     quantity        [UNSIGNED INTEGER]
 );
-
 -- Table : recipe
 CREATE TABLE recipe (
     id       [UNSIGNED INTEGER]  NOT NULL,
     name     TEXT                NOT NULL,
-    min_pers [UNSIGNED INTERGER] NOT NULL,
-    max_pers [UNSIGNED INTEGER]  NOT NULL
+--    min_pers [UNSIGNED INTERGER] NOT NULL,
+--    max_pers [UNSIGNED INTEGER]  NOT NULL
 );
 
 
@@ -39,9 +38,9 @@ CREATE TABLE recipe_food (
 -- Table : food
 CREATE TABLE food (
     id           [UNSIGNED INTEGER] NOT NULL,
+    name         TEXT               NOT NULL,
 --    type         TEXT               NOT NULL,
 --    sub_type     TEXT,
-    name         TEXT               NOT NULL,
 --    brand        TEXT,
 --    min_quantity [UNSIGNED INTEGER],
 --    min_weight   FLOAT,
