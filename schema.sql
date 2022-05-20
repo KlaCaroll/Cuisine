@@ -1,7 +1,4 @@
--- Encodage texte utilisé : UTF-8
-
--- Table : meal
-CREATE TABLE meal (
+CREATE TABLE IF NOT EXISTS meal (
     id         [UNSIGNED INTEGER] NOT NULL,
     name       TINYTEXT           NOT NULL,
     planned_at DATE               NOT NULL,
@@ -13,30 +10,26 @@ CREATE TABLE meal (
     )
 );
 
--- Table : meal_recipe
-CREATE TABLE meal_recipe (
+CREATE TABLE IF NOT EXISTS meal_recipe (
     meals_id        [UNSIGNED INTEGER],
     recipe_id      [UNSIGNED INTEGER],
     quantity        [UNSIGNED INTEGER]
 );
--- Table : recipe
-CREATE TABLE recipe (
+
+CREATE TABLE IF NOT EXISTS recipe (
     id       [UNSIGNED INTEGER]  NOT NULL,
     name     TEXT                NOT NULL,
 --    min_pers [UNSIGNED INTERGER] NOT NULL,
 --    max_pers [UNSIGNED INTEGER]  NOT NULL
 );
 
-
--- Table : recipe_food
-CREATE TABLE recipe_food (
+CREATE TABLE IF NOT EXISTS recipe_food (
     dish_id       [UNSIGNED INTEGER],
     food_id       [UNSIGNED INTEGER],
     quantity      [UNSIGNED INTEGER]
 );
 
--- Table : food
-CREATE TABLE food (
+CREATE TABLE IF NOT EXISTS food (
     id           [UNSIGNED INTEGER] NOT NULL,
     name         TEXT               NOT NULL,
 --    type         TEXT               NOT NULL,
@@ -49,3 +42,4 @@ CREATE TABLE food (
         id
     )
 );
+
