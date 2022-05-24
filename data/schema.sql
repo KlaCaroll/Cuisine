@@ -38,5 +38,3 @@ CREATE TABLE IF NOT EXISTS food (
 --    Liter        INTEGER,
     PRIMARY KEY (id)
 );
-
-*
