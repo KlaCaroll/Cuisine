@@ -5,28 +5,26 @@ CREATE TABLE IF NOT EXISTS meal (
     type       TEXT               NOT NULL,
     sub_type   TEXT,
     pers       INTEGER,
-    PRIMARY KEY (
-        id
-    )
+    PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS meal_recipe (
     meals_id        [UNSIGNED INTEGER],
     recipe_id      [UNSIGNED INTEGER],
-    quantity        [UNSIGNED INTEGER]
+    quantity        FLOAT
 );
 
 CREATE TABLE IF NOT EXISTS recipe (
     id       [UNSIGNED INTEGER]  NOT NULL,
-    name     TEXT                NOT NULL,
+    name     TEXT                NOT NULL
 --    min_pers [UNSIGNED INTERGER] NOT NULL,
 --    max_pers [UNSIGNED INTEGER]  NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS recipe_food (
-    dish_id       [UNSIGNED INTEGER],
+    recipe_id       [UNSIGNED INTEGER],
     food_id       [UNSIGNED INTEGER],
-    quantity      [UNSIGNED INTEGER]
+    quantity      FLOAT
 );
 
 CREATE TABLE IF NOT EXISTS food (
@@ -38,8 +36,7 @@ CREATE TABLE IF NOT EXISTS food (
 --    min_quantity [UNSIGNED INTEGER],
 --    min_weight   FLOAT,
 --    Liter        INTEGER,
-    PRIMARY KEY (
-        id
-    )
+    PRIMARY KEY (id)
 );
 
+*
