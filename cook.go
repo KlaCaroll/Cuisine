@@ -1,32 +1,35 @@
 package main
 
 import (
-//	"fmt"
+	"fmt"
 	"database/sql"
 	_"github.com/mattn/go-sqlite3" 
 	"log"
 	"net/http"
-	"os"
+	//"os"
 )
 
 func fetch(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("connexion database"));
-}
-
-func main() {
-	os.Remove("data/database.db")
+	//os.Remove("data/database.db")
 
 	db, err := sql.Open("sqlite3", "data/database.db")
 	if err != nil {
 		log.Fatal(err)
+		fmt.Println("connexion failed")
 	}
+	w.Write([]byte("connexion database"));
 	defer db.Close()
 
-	//rows, err := db.Query("SELECT name from meal")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//defer rows.Close()
+	rows, err := db.Query("select name from meal")
+	if err != nil {
+		log.Fatal(err)
+		fmt.Println("error")
+	}
+	defer rows.Close()
+}
+
+func main() {
+
 
 	http.HandleFunc("/connect", fetch)
 
