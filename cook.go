@@ -20,10 +20,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//sql.Read("data/schema.sql", "data/foodt.sql", "data/seed.sql", "data/recipe.sql", "data/recipe_food.sql")
 	defer db.Close()
 
-	//rows, err := db.Query("SELECT food.name as ingredients, quantity from recipe_food, food where food_id = food.id and recipe_id = 121191714519;")
+	//rows, err := db.Query("SELECT name from meal")
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
