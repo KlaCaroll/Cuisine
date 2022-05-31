@@ -9,13 +9,32 @@ import (
 	//"os"
 )
 
+var servive struct {
+	db *sql.DB
+}
+
 var (
+	id int
 	name string
+	date string
+	sub_type string
+	pers int
 	quantity float64
 )
 
 func createMeals(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("createMeals")
+	//db, err := sql.Open("sqlite3", "data/database.db")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer db.Close()
+	fmt.Println("what eat ?")
+	fmt.Scanf("%v", &name)
+	fmt.Println("we will eat : ", name)
+	fmt.Println("when ?")
+	fmt.Scanf("%v", &date)
+	fmt.Println("at", date)
+	fmt.Println("so, we will eat", name, "at" , date)
 }
 func fetchMeals(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("fetchMeals")
@@ -37,11 +56,7 @@ func list(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", "data/database.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
+
 	//rows, err := db.Query("select food.name as name, quantity from recipe_food, food where food_id = food.id and recipe_id = '318151721513151419952118'; ")
 	//if err != nil {
 	//	log.Fatal(err)
