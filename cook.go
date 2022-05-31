@@ -11,6 +11,9 @@ import (
 
 func fetch(w http.ResponseWriter, r *http.Request) {
 	//os.Remove("data/database.db")
+	var ingredients string
+	var name string
+	var quantity float64
 
 	db, err := sql.Open("sqlite3", "data/database.db")
 	if err != nil {
@@ -20,13 +23,16 @@ func fetch(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("connexion database"));
 	defer db.Close()
 
-	rows, err := db.Query("select name from meal")
+	rows, err := db.Query("select food_id as ingredients, food.name as name, quantity from recipe_food, food where food_id = food.id and recipe_id = '121191714519'; ")
 	if err != nil {
 		log.Fatal(err)
 		fmt.Println("error")
 	}
-	fmt.Println("rows")
 	defer rows.Close()
+	for rows.Next() {
+		rows.Scan(&ingredients, &name, &quantity)
+		fmt.Println(ingredients, name, quantity)
+	}
 }
 
 func main() {
