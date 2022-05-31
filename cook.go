@@ -25,6 +25,7 @@ func fetch(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 		fmt.Println("error")
 	}
+	fmt.Println("rows")
 	defer rows.Close()
 }
 
