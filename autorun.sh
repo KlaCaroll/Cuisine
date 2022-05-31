@@ -6,4 +6,5 @@ do
 	pkill -9 cook
 	go build -o cook cook.go
 	./cook &
+	#1 http :8081/connect
 done 
