@@ -28,12 +28,11 @@ func createMeals(w http.ResponseWriter, r *http.Request) {
 	//	log.Fatal(err)
 	//}
 	//defer db.Close()
-	fmt.Println("what eat ?")
+	
+	fmt.Println("what eat ? :")
 	fmt.Scanf("%v", &name)
-	fmt.Println("we will eat : ", name)
-	fmt.Println("when ?")
+	fmt.Println("and when ? :")
 	fmt.Scanf("%v", &date)
-	fmt.Println("at", date)
 	fmt.Println("so, we will eat", name, "at" , date)
 }
 func fetchMeals(w http.ResponseWriter, r *http.Request) {
