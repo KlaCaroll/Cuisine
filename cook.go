@@ -6,7 +6,7 @@ import (
 	_"github.com/mattn/go-sqlite3" 
 	"log"
 	"net/http"
-	//"os"
+	"os"
 )
 
 var (
@@ -38,6 +38,7 @@ func createMeal(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	fmt.Println(resp)
+	//return os.WriteFile("data/" + seed + ".sql", 0600)
 }
 
 func deleteMeal(w http.ResponseWriter, r *http.Request) {
