@@ -92,25 +92,6 @@ func list(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", "data/database.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-	
-	rows, err := db.Query("select name from meal where id = '2205171'; ")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-	
-	for rows.Next() {
-		rows.Scan(&name)
-		fmt.Println(name)
-	}
-
-
-
 	http.HandleFunc("/createMeal", createMeal)
 	http.HandleFunc("/fetchMeal", fetchMeal)
 	http.HandleFunc("/deleteMeal", deleteMeal)
