@@ -18,14 +18,7 @@ var (
 	quantity float64
 )
 
-func createMeals(w http.ResponseWriter, r *http.Request) {	
-	//fmt.Println("what eat ? :")
-	//fmt.Scanf("%v", &name)
-	//fmt.Println("and when ? :")
-	//fmt.Scanf("%v", &date)
-	//fmt.Println("so, we will eat", name, "at" , date)
-
-
+func createMeal(w http.ResponseWriter, r *http.Request) {
 	db, err := sql.Open("sqlite3", "data/database.db")
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +29,6 @@ func createMeals(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("insert datas")
 	res, err := stmt.Exec(1306221, "patate", "2022-06-13")
 	if err != nil {
 		log.Fatal(err)
@@ -46,22 +38,39 @@ func createMeals(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	fmt.Println(resp)
+}
+
+func deleteMeal(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("sqlite3", "data/database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	stmt, err := db.Exec("DELETE FROM meal where name = 'patate';")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(stmt,"deleted")
+}
+
+func fetchMeal(w http.ResponseWriter, r *http.Request) {
+	db, err := sql.Open("sqlite3", "data/database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 	
-	rows, err := db.Query("SELECT name, planned_at FROM meal")
+	rows, err := db.Query("SELECT name, planned_at FROM meal; ")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	
+
 	for rows.Next() {
 		rows.Scan(&name, &planned_at)
 		fmt.Println(name, planned_at)
 	}
-
-
-}
-func fetchMeals(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("fetchMeals")
 }
 func createRecipe(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("createRecipe")
@@ -100,8 +109,9 @@ func main() {
 
 
 
-	http.HandleFunc("/createMeals", createMeals)
-	http.HandleFunc("/fetchMeals", fetchMeals)
+	http.HandleFunc("/createMeal", createMeal)
+	http.HandleFunc("/fetchMeal", fetchMeal)
+	http.HandleFunc("/deleteMeal", deleteMeal)
 	http.HandleFunc("/createRecipe", createRecipe)
 	http.HandleFunc("/fetchRecipe", fetchRecipe)
 	http.HandleFunc("/createFood", createFood)
