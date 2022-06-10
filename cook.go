@@ -17,6 +17,8 @@ var (
 	pers int
 	quantity_r float64
 	food string
+	recipe_id int
+	recipe_name string
 )
 
 func createMeal(w http.ResponseWriter, r *http.Request) {
@@ -91,22 +93,21 @@ func fetchFood(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("fetchFood")
 }
 func list(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("list")
 	db, err := sql.Open("sqlite3", "data/database.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT food_name, quantity_r from recipe_food, food where food_id = food.id and recipe_id = '121191714519';")
+	rows, err := db.Query("SELECT recipe_name, food_name, quantity_r FROM recipe, recipe_food, food WHERE recipe.id = recipe_food.recipe_id AND recipe_food.food_id = food.id AND recipe_name = 'lasagnes';")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		rows.Scan(&food, &quantity_r)
-		fmt.Println(food, quantity_r)
+		rows.Scan(&recipe_name, &food, &quantity_r,)
+		fmt.Println(recipe_name, food, quantity_r)
 	}
 }
 
