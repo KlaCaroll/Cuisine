@@ -99,7 +99,7 @@ func list(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT recipe_name, food_name, quantity_r FROM recipe, recipe_food, food WHERE recipe.id = recipe_food.recipe_id AND recipe_food.food_id = food.id AND recipe_name = 'lasagnes';")
+	rows, err := db.Query("SELECT recipe_name, food_name, quantity_r FROM recipe, recipe_food, food WHERE recipe.id = recipe_food.recipe_id AND recipe_food.food_id = food.id AND recipe_name = 'quiche_lorraine';")
 	if err != nil {
 		log.Fatal(err)
 	}
