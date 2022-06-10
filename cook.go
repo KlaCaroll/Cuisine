@@ -15,7 +15,8 @@ var (
 	planned_at string
 	sub_type string
 	pers int
-	quantity float64
+	quantity_r float64
+	food string
 )
 
 func createMeal(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +38,7 @@ func createMeal(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(resp)
+	fmt.Println(resp, "meal created")
 	//return os.WriteFile("data/" + seed + ".sql", 0600)
 }
 
@@ -52,11 +53,13 @@ func deleteMeal(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(stmt,"deleted")
+	fmt.Println(stmt,"meal deleted")
 	http.Redirect(w, r, "/fetchMeal", http.StatusFound)
 }
 
 func fetchMeal(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("MEALS :")
+
 	db, err := sql.Open("sqlite3", "data/database.db")
 	if err != nil {
 		log.Fatal(err)
@@ -89,6 +92,22 @@ func fetchFood(w http.ResponseWriter, r *http.Request) {
 }
 func list(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("list")
+	db, err := sql.Open("sqlite3", "data/database.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	rows, err := db.Query("SELECT food_name, quantity_r from recipe_food, food where food_id = food.id and recipe_id = '121191714519';")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		rows.Scan(&food, &quantity_r)
+		fmt.Println(food, quantity_r)
+	}
 }
 
 func main() {

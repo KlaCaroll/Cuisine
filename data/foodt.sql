@@ -1,4 +1,4 @@
-INSERT INTO food (id, name ) VALUES 
+INSERT INTO food (id, food_name ) VALUES 
     (18, 'riz'),
     (2, 'oeuf'),
     (3, 'farine'),

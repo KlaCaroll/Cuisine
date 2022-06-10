@@ -1,4 +1,4 @@
-INSERT INTO recipe_food (recipe_id, food_id, quantity) VALUES
+INSERT INTO recipe_food (recipe_id, food_id, quantity_r) VALUES
     (121191714519, 17, 2),
     (121191714519, 2, 0.75),
     (121191714519, 3, 0.625),

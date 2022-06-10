@@ -1,4 +1,4 @@
-INSERT INTO recipe ( id, name ) VALUES 
+INSERT INTO recipe ( id, recipe_name ) VALUES 
     (121191714519, 'lasagnes'),
     (311821514141181, 'carbonnara'),
     (1912113151452016159419, 'saumon_petit_poids'),
