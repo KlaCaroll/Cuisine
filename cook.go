@@ -16,7 +16,7 @@ var (
 	sub_type string
 	pers int
 	quantity_r float64
-	food string
+	food_name string
 	recipe_id int
 	recipe_name string
 )
@@ -93,21 +93,22 @@ func fetchFood(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("fetchFood")
 }
 func list(w http.ResponseWriter, r *http.Request) {
+	fmt.Print("SHOPING LIST :")
 	db, err := sql.Open("sqlite3", "data/database.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
-	rows, err := db.Query("SELECT recipe_name, food_name, quantity_r FROM recipe, recipe_food, food WHERE recipe.id = recipe_food.recipe_id AND recipe_food.food_id = food.id AND recipe_name = 'quiche_lorraine';")
+	rows, err := db.Query("SELECT food_name, SUM(quantity_r) FROM meal, meal_recipe, recipe, recipe_food, food WHERE meal.id = meal_recipe.meals_id AND meal_recipe.recipe_id = recipe.id AND recipe.id = recipe_food.recipe_id AND recipe_food.food_id = food.id AND meal.planned_at BETWEEN '2022-05-16' AND '2022-05-17' GROUP BY food.food_name;")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		rows.Scan(&recipe_name, &food, &quantity_r,)
-		fmt.Println(recipe_name, food, quantity_r)
+		rows.Scan(&food_name, &quantity_r,)
+		fmt.Println(food_name, quantity_r)
 	}
 }
 
