@@ -5,7 +5,7 @@ insert into food (id, name) values
 (4, 'chocolat');
 
 insert into recipe (id, name) values
-(1, 'gatal');
+(1, 'gateau');
 
 insert into recipe_food (recipe_id, food_id, quantity) values
 (1, 1, 1),

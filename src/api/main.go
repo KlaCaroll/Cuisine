@@ -12,6 +12,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type any = interface{}
+
 func main() {
 	var (
 		addr string
@@ -42,12 +44,14 @@ func main() {
 		raw, err := io.ReadAll(r.Body)
 		if err != nil {
 			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
 			return
 		}
 
 		err = json.Unmarshal(raw, &input)
 		if err != nil {
 			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
 			return
 		}
 
@@ -65,11 +69,11 @@ func main() {
 		`, input.From, input.To)
 		if err != nil {
 			log.Println("querying database", err)
+			writeError(w, "database_error", err)
 			return
 		}
 
-		raw, _ = json.Marshal(items)
-		w.Write(raw)
+		write(w, items)
 	})
 
 	// Start the HTTP server.
@@ -83,4 +87,22 @@ func main() {
 		log.Println("listening", err)
 		return
 	}
+}
+
+func write(w http.ResponseWriter, payload any) {
+	w.Header().Set("Content-Type", "application/json")
+	raw, _ := json.Marshal(payload)
+	w.Write(raw)
+}
+
+type apiError struct{
+	Code string `json:"code"`
+	Err string `json:"err"`
+}
+
+func writeError(w http.ResponseWriter, code string, err error) {
+	write(w, apiError{
+		Code: code,
+		Err: err.Error(),
+	})
 }
