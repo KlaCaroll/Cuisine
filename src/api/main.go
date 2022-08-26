@@ -11,6 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
+//ajouter create meal
 
 type any = interface{}
 
@@ -33,8 +34,56 @@ func main() {
 	log.Println("opened connection")
 	defer db.Close()
 
-	// Create and populate the router.
 	var mux = http.NewServeMux()
+	// Create meal
+	mux.HandleFunc("/createMeal", func(w http.ResponseWriter, r *http.Request) {
+		var input struct {
+			PlannedAt time.Time `json:"planned_at"`
+			Guests uint `json:"guests"`
+		}
+
+		raw, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
+			return
+		}
+
+		err = json.Unmarshal(raw, &input)
+		if err != nil {
+			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
+			return
+		}
+
+		res, err := db.Exec(`
+			INSERT INTO meal (planned_at, guests)
+			VALUES (?, ?)
+		`, input.PlannedAt, input.Guests)
+		if err != nil {
+			log.Println("querying database", err)
+			writeError(w, "createMeal_error", err)
+			return
+		}
+
+		var output struct{
+			ID int64 `json:"id"`
+		}
+
+		output.ID, err = res.LastInsertId()
+		if err != nil {}
+
+		write(w, output)
+	})
+
+	// Show Meal get ou list
+	// Delete Meal
+	// Update Meal
+	
+	
+	// Add recipe
+
+	// Create and populate the router.
 	mux.HandleFunc("/computeShoppingList", func(w http.ResponseWriter, r *http.Request) {
 		var input struct {
 			From time.Time `json:"from"`
