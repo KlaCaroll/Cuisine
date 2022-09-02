@@ -63,7 +63,7 @@ func main() {
 		`, input.PlannedAt, input.Guests)
 		if err != nil {
 			log.Println("querying database", err)
-			writeError(w, "createMeal_error", err)
+			writeError(w, "database_error", err)
 			return
 		}
 
@@ -122,6 +122,48 @@ func main() {
 	})
 
 	// Delete Meal
+	mux.HandleFunc("/deleteMeal", func(w http.ResponseWriter, r *http.Request) {
+		var input struct {
+			ID int64 `json:="id"`
+		}
+
+		raw, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
+			return
+		}
+
+		err = json.Unmarshal(raw, &input)
+		if err != nil {
+			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
+			return
+		}
+
+		res, err := db.Exec(`
+			DELETE FROM meal
+			WHERE id=?
+		`, input.ID)
+		if err != nil {
+			log.Println("querying database", err)
+			writeError(w, "database_error", err)
+			return
+		}
+
+		var output struct{
+			ID int64 `db:"id" json:"id"`
+		}
+
+		output.ID, err = res.LastInsertId()
+		if err != nil {
+			log.Println("querying database", err)
+			writeError(w, "database_error", err)
+			return
+		}
+
+		write(w, output)
+	})
 	// Update Meal
 	
 	
