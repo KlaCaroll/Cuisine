@@ -6,13 +6,18 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type any = interface{}
+
+type Service struct {
+	DB *sqlx.DB
+}	
+
+// Add recipe (avantage / inconvenients / possible ou pas ...)
 
 func main() {
 	var (
@@ -24,6 +29,7 @@ func main() {
 	flag.Parse()
 
 	// INITIALIZE THE DATABASE CONNEXION
+
 	log.Println("opening connection to", dsn)
 	db, err := sqlx.Connect("sqlite3", dsn)
 	if err != nil {
@@ -33,180 +39,17 @@ func main() {
 	log.Println("opened connection")
 	defer db.Close()
 
+	s := Service {
+		DB: db,
+	}
+
 	var mux = http.NewServeMux()
 	
-	// CREATE MEAL
-	mux.HandleFunc("/createMeal", func(w http.ResponseWriter, r *http.Request) {
-		var input struct {
-			PlannedAt time.Time `json:"planned_at"`
-			Guests int64 `json:"guests"`
-		}
-
-		err := read(r, &input)
-		if err!= nil {
-			log.Println("parsing input", err)
-			writeError(w,"input_error", err)
-			return
-		}
-
-		res, err := db.Exec(`
-			INSERT INTO meal (planned_at, guests)
-			VALUES (?, ?)
-		`, input.PlannedAt, input.Guests)
-		if err != nil {
-			log.Println("querying database", err)
-			writeError(w, "database_error", err)
-			return
-		}
-
-		var output struct{
-			ID int64 `db:"id" json:"id"`
-		}
-
-		output.ID, err = res.LastInsertId()
-		if err != nil {
-			log.Println("querying database", err)
-			writeError(w, "database_error", err)
-			return
-		}
-
-		write(w, output)
-	})
-
-	// SHOW MEAL
-	mux.HandleFunc("/showMeals", func(w http.ResponseWriter, r *http.Request) {
-		var input struct {
-			From time.Time `json:"from"`
-			To   time.Time `json:"to"`
-		}
-
-		err := read(r, &input)
-		if err!= nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		var meal []struct{
-			ID int64 `db:"id" json:"id"`
-			PlannedAt time.Time `db:"planned_at" json:"planned_at"`
-			Guests uint `db:"guests" json:"guests"`
-		}
-
-		err = db.Select(&meal, `
-			SELECT * FROM meal
-			WHERE planned_at BETWEEN ? AND ?
-		`, input.From, input.To)
-		if err != nil {
-			log.Println("querying database", err)
-			writeError(w, "database_error", err)
-			return
-		}
-
-		write(w, meal)
-	})
-
-	// DELETE MEAL
-	mux.HandleFunc("/deleteMeal", func(w http.ResponseWriter, r *http.Request) {
-		var input struct {
-			ID int64 `json:="id"`
-		}
-
-		err := read(r, &input)
-		if err!= nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		res, err := db.Exec(`
-			DELETE FROM meal
-			WHERE id=?
-		`, input.ID)
-		if err != nil {
-			log.Println("querying database", err)
-			writeError(w, "database_error", err)
-			return
-		}
-
-		var output struct{
-			ID int64 `db:"id" json:"id"`
-		}
-
-		output.ID, err = res.LastInsertId()
-		if err != nil {
-			log.Println("querying database", err)
-			writeError(w, "database_error", err)
-			return
-		}
-
-		write(w, output)
-	})
-	// UPDATE MEAL refaire les champs
-	mux.HandleFunc("/updateMeal", func(w http.ResponseWriter, r *http.Request) {
-		var input struct {
-			ID int64 `json:"id"`
-			PlannedAt time.Time `json:"planned_at"`
-			Guests int64 `json:"guests"`
-		}
-
-		err := read(r, &input)
-		if err!= nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		res, err := db.Exec(`
-			UPDATE meal
-			SET planned_at = ?, guests = ?
-			WHERE id = ?
-		`,input.PlannedAt, input.Guests, input.ID)
-		if err != nil {
-			log.Println("querying database", err)
-			writeError(w, "database_error", err)
-			return
-		}
-
-		log.Println("Meal updated", res)
-	})
-	
-	// Add recipe (avantage / inconvenients / possible ou pas ...)
-
-	// Create and populate the router.
-	mux.HandleFunc("/computeShoppingList", func(w http.ResponseWriter, r *http.Request) {
-		var input struct {
-			From time.Time `json:"from"`
-			To   time.Time `json:"to"`
-		}
-
-		err := read(r, &input)
-		if err!= nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		var items []struct {
-			Name     string  `db:"name" json:"name"`
-			Quantity float64 `db:"quantity" json:"quantity"`
-		}
-		err = db.Select(&items, `
-			SELECT f.name AS name, rf.quantity * m.guests AS quantity
-			FROM meal m
-			JOIN meal_recipe mr ON m.id = mr.meal_id
-			JOIN recipe_food rf ON mr.recipe_id = rf.recipe_id
-			JOIN food f ON rf.food_id = f.id
-			WHERE m.planned_at BETWEEN ? AND ?
-		`, input.From, input.To)
-		if err != nil {
-			log.Println("querying database", err)
-			writeError(w, "database_error", err)
-			return
-		}
-
-		write(w, items)
-	})
+	mux.HandleFunc("/createMeal", s.CreateMeal)
+	mux.HandleFunc("/showMeals", s.ShowMeal)
+	mux.HandleFunc("/deleteMeal", s.DeleteMeal) 
+	mux.HandleFunc("/updateMeal", s.UpdateMeal)
+	mux.HandleFunc("/computeShoppingList", s.ComputeShoppingList)
 
 	// Start the HTTP server.
 	var srv = &http.Server{
