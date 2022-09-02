@@ -35,11 +35,12 @@ func main() {
 	defer db.Close()
 
 	var mux = http.NewServeMux()
+	
 	// Create meal
 	mux.HandleFunc("/createMeal", func(w http.ResponseWriter, r *http.Request) {
 		var input struct {
 			PlannedAt time.Time `json:"planned_at"`
-			Guests uint `json:"guests"`
+			Guests int64 `json:"guests"`
 		}
 
 		raw, err := io.ReadAll(r.Body)
@@ -67,21 +68,66 @@ func main() {
 		}
 
 		var output struct{
-			ID int64 `json:"id"`
+			ID int64 `db:"id" json:"id"`
+			PlannedAt time.Time `db:"planned_at" json:"planned_at"`
+			Guests int64 `db:"guests" json:"guests"`
 		}
 
 		output.ID, err = res.LastInsertId()
-		if err != nil {}
+		if err != nil {
+			log.Println("querying database", err)
+			writeError(w, "createMeal_error", err)
+			return
+		}
 
 		write(w, output)
 	})
 
 	// Show Meal get ou list
+	mux.HandleFunc("/showMeals", func(w http.ResponseWriter, r *http.Request) {
+		var input struct {
+			From time.Time `json:"from"`
+			To   time.Time `json:"to"`
+		}
+
+		raw, err := io.ReadAll(r.Body)
+		if err != nil {
+			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
+			return
+		}
+
+		err = json.Unmarshal(raw, &input)
+		if err != nil {
+			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
+			return
+		}
+
+		var meal struct{
+			ID int64 `db:"id" json:"id"`
+			PlannedAt time.Time `db:"planned_at" json:"planned_at"`
+			Guests uint `db:"guests" json:"guests"`
+		}
+
+		err = db.Get(&meal, `
+			SELECT * FROM meal
+			WHERE planned_at BETWEEN ? AND ?
+		`, input.From, input.To)
+		if err != nil {
+			log.Println("querying database", err)
+			writeError(w, "showMeals_error", err)
+			return
+		}
+
+		write(w, meal)
+	})
+
 	// Delete Meal
 	// Update Meal
 	
 	
-	// Add recipe
+	// Add recipe (avantage / inconvenients / possible ou pas ...)
 
 	// Create and populate the router.
 	mux.HandleFunc("/computeShoppingList", func(w http.ResponseWriter, r *http.Request) {
