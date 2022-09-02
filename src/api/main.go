@@ -11,7 +11,6 @@ import (
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
-//ajouter create meal
 
 type any = interface{}
 
@@ -24,7 +23,7 @@ func main() {
 	flag.StringVar(&dsn, "dsn", "database.sqlite", "path to the database to use")
 	flag.Parse()
 
-	// Initialize the database connection.
+	// INITIALIZE THE DATABASE CONNEXION
 	log.Println("opening connection to", dsn)
 	db, err := sqlx.Connect("sqlite3", dsn)
 	if err != nil {
@@ -36,24 +35,17 @@ func main() {
 
 	var mux = http.NewServeMux()
 	
-	// Create meal
+	// CREATE MEAL
 	mux.HandleFunc("/createMeal", func(w http.ResponseWriter, r *http.Request) {
 		var input struct {
 			PlannedAt time.Time `json:"planned_at"`
 			Guests int64 `json:"guests"`
 		}
 
-		raw, err := io.ReadAll(r.Body)
-		if err != nil {
+		err := read(r, &input)
+		if err!= nil {
 			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		err = json.Unmarshal(raw, &input)
-		if err != nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
+			writeError(w,"input_error", err)
 			return
 		}
 
@@ -81,22 +73,15 @@ func main() {
 		write(w, output)
 	})
 
-	// Show Meal get ou list
+	// SHOW MEAL
 	mux.HandleFunc("/showMeals", func(w http.ResponseWriter, r *http.Request) {
 		var input struct {
 			From time.Time `json:"from"`
 			To   time.Time `json:"to"`
 		}
 
-		raw, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		err = json.Unmarshal(raw, &input)
-		if err != nil {
+		err := read(r, &input)
+		if err!= nil {
 			log.Println("parsing input", err)
 			writeError(w, "input_error", err)
 			return
@@ -121,21 +106,14 @@ func main() {
 		write(w, meal)
 	})
 
-	// Delete Meal
+	// DELETE MEAL
 	mux.HandleFunc("/deleteMeal", func(w http.ResponseWriter, r *http.Request) {
 		var input struct {
 			ID int64 `json:="id"`
 		}
 
-		raw, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		err = json.Unmarshal(raw, &input)
-		if err != nil {
+		err := read(r, &input)
+		if err!= nil {
 			log.Println("parsing input", err)
 			writeError(w, "input_error", err)
 			return
@@ -164,7 +142,7 @@ func main() {
 
 		write(w, output)
 	})
-	// Update Meal
+	// UPDATE MEAL
 	
 	
 	// Add recipe (avantage / inconvenients / possible ou pas ...)
@@ -176,15 +154,8 @@ func main() {
 			To   time.Time `json:"to"`
 		}
 
-		raw, err := io.ReadAll(r.Body)
-		if err != nil {
-			log.Println("parsing input", err)
-			writeError(w, "input_error", err)
-			return
-		}
-
-		err = json.Unmarshal(raw, &input)
-		if err != nil {
+		err := read(r, &input)
+		if err!= nil {
 			log.Println("parsing input", err)
 			writeError(w, "input_error", err)
 			return
@@ -240,4 +211,16 @@ func writeError(w http.ResponseWriter, code string, err error) {
 		Code: code,
 		Err: err.Error(),
 	})
+}
+
+func read(r *http.Request, payload any) (err error) {
+	raw, err := io.ReadAll(r.Body)
+	if err != nil {
+		return err
+	}
+	err = json.Unmarshal(raw, payload)
+	if err != nil {
+		return err
+	}
+	return nil		
 }
