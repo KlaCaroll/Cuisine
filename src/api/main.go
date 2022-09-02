@@ -142,8 +142,34 @@ func main() {
 
 		write(w, output)
 	})
-	// UPDATE MEAL
-	
+	// UPDATE MEAL refaire les champs
+	mux.HandleFunc("/updateMeal", func(w http.ResponseWriter, r *http.Request) {
+		var input struct {
+			ID int64 `json:"id"`
+			PlannedAt time.Time `json:"planned_at"`
+			Guests int64 `json:"guests"`
+		}
+
+		err := read(r, &input)
+		if err!= nil {
+			log.Println("parsing input", err)
+			writeError(w, "input_error", err)
+			return
+		}
+
+		res, err := db.Exec(`
+			UPDATE meal
+			SET planned_at = ?, guests = ?
+			WHERE id = ?
+		`,input.PlannedAt, input.Guests, input.ID)
+		if err != nil {
+			log.Println("querying database", err)
+			writeError(w, "database_error", err)
+			return
+		}
+
+		log.Println("Meal updated", res)
+	})
 	
 	// Add recipe (avantage / inconvenients / possible ou pas ...)
 
