@@ -69,14 +69,12 @@ func main() {
 
 		var output struct{
 			ID int64 `db:"id" json:"id"`
-			PlannedAt time.Time `db:"planned_at" json:"planned_at"`
-			Guests int64 `db:"guests" json:"guests"`
 		}
 
 		output.ID, err = res.LastInsertId()
 		if err != nil {
 			log.Println("querying database", err)
-			writeError(w, "createMeal_error", err)
+			writeError(w, "database_error", err)
 			return
 		}
 
@@ -104,19 +102,19 @@ func main() {
 			return
 		}
 
-		var meal struct{
+		var meal []struct{
 			ID int64 `db:"id" json:"id"`
 			PlannedAt time.Time `db:"planned_at" json:"planned_at"`
 			Guests uint `db:"guests" json:"guests"`
 		}
 
-		err = db.Get(&meal, `
+		err = db.Select(&meal, `
 			SELECT * FROM meal
 			WHERE planned_at BETWEEN ? AND ?
 		`, input.From, input.To)
 		if err != nil {
 			log.Println("querying database", err)
-			writeError(w, "showMeals_error", err)
+			writeError(w, "database_error", err)
 			return
 		}
 
