@@ -45,6 +45,10 @@ func main() {
 
 	var mux = http.NewServeMux()
 	
+	mux.HandleFunc("/listRecipes", s.listRecipes)
+	mux.HandleFunc("/showRecipe", s.showRecipe)
+	mux.HandleFunc("/createRecipe", s.CreateRecipe)
+
 	mux.HandleFunc("/createMeal", s.CreateMeal)
 	mux.HandleFunc("/showMeals", s.ShowMeal)
 	mux.HandleFunc("/deleteMeal", s.DeleteMeal) 

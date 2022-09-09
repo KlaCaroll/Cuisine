@@ -25,6 +25,7 @@ func (s Service) ComputeShoppingList(w http.ResponseWriter, r *http.Request) {
 		Name     string  `db:"name" json:"name"`
 		Quantity float64 `db:"quantity" json:"quantity"`
 	}
+	
 	err = s.DB.Select(&items, `
 		SELECT f.name AS name, rf.quantity * m.guests AS quantity
 		FROM meal m
