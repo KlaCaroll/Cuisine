@@ -43,17 +43,24 @@ func main() {
 		DB: db,
 	}
 
+	// add recipe to meal + delete + 
+	// dans create et update ajouter les tables pivo
+
 	var mux = http.NewServeMux()
 	
-	mux.HandleFunc("/listRecipes", s.listRecipes)
-	mux.HandleFunc("/showRecipe", s.showRecipe)
+	mux.HandleFunc("/listRecipes", s.ListRecipes)
+	mux.HandleFunc("/showRecipe", s.ShowRecipe)
 	mux.HandleFunc("/createRecipe", s.CreateRecipe)
+	mux.HandleFunc("/deleteRecipe", s.DeleteRecipe)
 
 	mux.HandleFunc("/createMeal", s.CreateMeal)
-	mux.HandleFunc("/showMeals", s.ShowMeal)
+	mux.HandleFunc("/showMeals", s.ShowMeals)
 	mux.HandleFunc("/deleteMeal", s.DeleteMeal) 
 	mux.HandleFunc("/updateMeal", s.UpdateMeal)
 	mux.HandleFunc("/computeShoppingList", s.ComputeShoppingList)
+
+	//mux.HandleFunc("/addRecipeToMeal", s.AddRecipeToMeal)
+	//mux.HandleFunc("/deleteRecipeFromMeal", s.deleteRecipeFromMeal)
 
 	// Start the HTTP server.
 	var srv = &http.Server{

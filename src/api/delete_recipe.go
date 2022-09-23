@@ -7,9 +7,9 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func (s Service) CreateRecipe(w http.ResponseWriter, r *http.Request) {
+func (s Service) DeleteRecipe(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Name string `json:"name"`
+		ID int64 `json:"id"`
 	}
 
 	err := read(r, &input)
@@ -20,9 +20,9 @@ func (s Service) CreateRecipe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := s.DB.Exec(`
-		INSERT INTO recipe (name)
-		VALUES (?)
-	`, input.Name)
+		DELETE FROM recipe
+		WHERE id=?
+	`, input.ID)
 	if err != nil {
 		log.Println("querying database", err)
 		writeError(w, "database_error", err)

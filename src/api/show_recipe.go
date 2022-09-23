@@ -7,7 +7,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func (s Service) showRecipe(w http.ResponseWriter, r *http.Request) {
+func (s Service) ShowRecipe(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		RecipeID int64 `json:recipe_ID`
 	}

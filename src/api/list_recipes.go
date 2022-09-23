@@ -7,15 +7,14 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func (s Service) listRecipes(w http.ResponseWriter, r *http.Request) {
-
-	var recipe []struct{
+func (s Service) ListRecipes(w http.ResponseWriter, r *http.Request) {
+	var recipes []struct{
 		ID int64 `db:"id" json:"id"`
 		Name string `db:"name" json:"name"`
 	}
 
-	err := s.DB.Select(&recipe, `
-		SELECT * FROM recipe
+	err := s.DB.Select(&recipes, `
+		SELECT id, name FROM recipe
 	`)
 	if err != nil {
 		log.Println("querying database", err)
@@ -23,5 +22,5 @@ func (s Service) listRecipes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	write(w, recipe)
+	write(w, recipes)
 }
