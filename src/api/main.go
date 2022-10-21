@@ -47,7 +47,7 @@ func main() {
 	// dans create et update ajouter les tables pivo
 
 	var mux = http.NewServeMux()
-	
+
 	mux.HandleFunc("/listRecipes", s.ListRecipes)
 	mux.HandleFunc("/showRecipe", s.ShowRecipe)
 	mux.HandleFunc("/createRecipe", s.CreateRecipe)

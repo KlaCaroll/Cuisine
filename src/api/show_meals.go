@@ -48,17 +48,21 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println(meals)
+
 	var mealIDs = make([]int64, 0, len(meals))
 	var mealsByID = make(map[int64]Meal, len(meals))
 	for _, meal := range meals {
 		mealIDs = append(mealIDs, meal.ID)
 	}
 
+	fmt.Println(mealIDs, meals)
+
 	query, args, _ := sqlx.In(`
-		select mr.meal_id, id, name
-		from recipe as r
-		join meal_recipe as mr on r.id = mr.recipe_id
-		where mr.meal_id in (?)
+		SELECT mr.meal_id, id, name
+		FROM recipe as r
+		JOIN meal_recipe as mr ON r.id = mr.recipe_id
+		WHERE mr.meal_id in (?)
 	`, mealIDs)
 
 	var res []struct{
