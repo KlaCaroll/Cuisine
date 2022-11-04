@@ -48,15 +48,12 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println(meals)
-
 	var mealIDs = make([]int64, 0, len(meals))
 	var mealsByID = make(map[int64]Meal, len(meals))
 	for _, meal := range meals {
 		mealIDs = append(mealIDs, meal.ID)
+		mealsByID[meal.ID] = meal
 	}
-
-	fmt.Println(mealIDs, meals)
 
 	query, args, _ := sqlx.In(`
 		SELECT mr.meal_id, id, name
@@ -73,7 +70,12 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 	_ = err
 
 	for _, r := range res {
-		meal := mealsByID[r.MealID]
+		meal, ok := mealsByID[r.MealID]
+		if !ok {
+			log.Println("fail", r.MealID, mealsByID)
+			writeError(w, "internal_error", errors.New("meal not found"))
+			return
+		}
 		meal.Recipes = append(meal.Recipes, r.Recipe)
 		mealsByID[r.MealID] = meal
 	}
