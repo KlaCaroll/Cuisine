@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 	"fmt"
+	"errors"
 	"github.com/jmoiron/sqlx"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -67,7 +68,6 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 		Recipe
 	}
 	err = s.DB.Select(&res, query, args...)
-	_ = err
 
 	for _, r := range res {
 		meal, ok := mealsByID[r.MealID]
@@ -80,10 +80,14 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 		mealsByID[r.MealID] = meal
 	}
 
+
+	fmt.Println(meals)
 	meals = make([]Meal, 0, len(meals))
 	for _, m := range mealsByID {
 		meals = append(meals, m)
 	}
+
+	fmt.Println(meals)
 
 	write(w, meals)
 }

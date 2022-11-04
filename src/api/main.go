@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/rs/cors"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -63,9 +64,11 @@ func main() {
 	//mux.HandleFunc("/deleteRecipeFromMeal", s.deleteRecipeFromMeal)
 
 	// Start the HTTP server.
+	handler := cors.Default().Handler(mux)
+	// CORS => handler
 	var srv = &http.Server{
 		Addr:    addr,
-		Handler: mux,
+		Handler: handler,
 	}
 	log.Println("listen on addr", addr)
 	err = srv.ListenAndServe()
