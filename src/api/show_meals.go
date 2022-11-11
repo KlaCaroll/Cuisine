@@ -18,7 +18,7 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := read(r, &input)
-	if err!= nil {
+	if err != nil {
 		log.Println("parsing input", err)
 		writeError(w, "input_error", err)
 		return
@@ -49,6 +49,11 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(meals) == 0 {
+		write(w, meals)
+		return
+	}
+
 	var mealIDs = make([]int64, 0, len(meals))
 	var mealsByID = make(map[int64]Meal, len(meals))
 	for _, meal := range meals {
@@ -56,17 +61,22 @@ func (s Service) ShowMeals(w http.ResponseWriter, r *http.Request) {
 		mealsByID[meal.ID] = meal
 	}
 
-	query, args, _ := sqlx.In(`
+	query, args, err := sqlx.In(`
 		SELECT mr.meal_id, id, name
 		FROM recipe as r
 		JOIN meal_recipe as mr ON r.id = mr.recipe_id
 		WHERE mr.meal_id in (?)
 	`, mealIDs)
+	if err !=nil {
+		log.Println("building query", err)
+		writeError(w,"query error", err)
+	}
 
 	var res []struct{
 		MealID int64 `db:"meal_id"`
 		Recipe
 	}
+
 	err = s.DB.Select(&res, query, args...)
 
 	for _, r := range res {
